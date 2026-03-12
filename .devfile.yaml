@@ -19,7 +19,7 @@ projects:
       checkoutFrom:
         revision: "main"
         remote: origin
-ccomponents:
+components:
   - name: tools
     container:
       image: registry.redhat.io/devspaces/udi-rhel9
