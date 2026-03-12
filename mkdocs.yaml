@@ -1,0 +1,10 @@
+site_name: skupperfrontend
+site_description: A cool quarkus app
+repo_url: 
+
+plugins:
+  - techdocs-core
+
+# Note for content editors, edit only the section below
+nav:
+  - skupperfrontend Documentation: index.md

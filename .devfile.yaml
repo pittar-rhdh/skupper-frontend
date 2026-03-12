@@ -1,0 +1,77 @@
+schemaVersion: 2.2.2
+attributes:
+  controller.devfile.io/storage-type: per-workspace
+metadata:
+  name: "skupperfrontend"
+  provider: Red Hat
+  displayName: Basic Quarkus App
+  description: Basic Quarkus App
+  tags:
+    - Quarkus
+    - Java
+  projectType: Quarkus
+  language: Java
+projects:
+  - name: "skupperfrontend"
+    git:
+      remotes:
+        origin: "https://github.com/pittar-rhdh/skupper-frontend"
+      checkoutFrom:
+        revision: "main"
+        remote: origin
+ccomponents:
+  - name: tools
+    container:
+      image: registry.redhat.io/devspaces/udi-rhel9
+      env:
+        - name: USE_JAVA21
+          value: "true"
+        - name: QUARKUS_HTTP_HOST
+          value: 0.0.0.0
+        - name: QUARKUS_ANALYTICS_DISABLED
+          value: "true"
+      endpoints:
+        - exposure: none
+          name: debug
+          protocol: tcp
+          targetPort: 5005
+        - exposure: public
+          name: main
+          protocol: https
+          targetPort: 8080
+          path: /
+        - exposure: public
+          name: quarkus-devui
+          path: /q/dev-ui
+          protocol: https
+          targetPort: 8080
+      volumeMounts:
+        - name: m2
+          path: /home/user/.m2
+      cpuLimit: '4'
+      cpuRequest: '1'
+      memoryLimit: '8G'
+      memoryRequest: '8G'
+      mountSources: true
+  - volume:
+      size: 1G
+    name: m2
+commands:
+  - id: 1-package
+    exec:
+      label: "1. Package the application"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/"skupperfrontend"
+      commandLine: "mvn package"
+      group:
+        kind: build
+        isDefault: true
+  - id: 2-startdev
+    exec:
+      label: "2. Start Development mode (Hot reload + debug)"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/"skupperfrontend"
+      commandLine: "mvn compile quarkus:dev"
+      group:
+        kind: run
+        isDefault: true
